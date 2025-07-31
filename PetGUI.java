@@ -14,14 +14,16 @@ import java.awt.Color;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
 
-public class PetGUI extends JFrame{ //Inherit (gain access to all methods and fields) from JFrame, a class that helps make the app window
+public class PetGUI extends JFrame{ //Inherit (gain access to all methods and fields) from JFrame, a class that helps make the "frame", in this case i.e. app window
     JButton dogButton; //Button for creating dog
     JButton catButton; //Button for creating cat
     JButton otterButton; //Button for creating otter
-    PetPanel petPanel;
+    HomePanel homePanel;
     public static final int PANEL_WIDTH = 1500;
     public static final int PANEL_HEIGHT = 1500;
+    PetPanel petPanel;
     /**
      * Constructor for objects of class PetGUI
      */
@@ -35,32 +37,97 @@ public class PetGUI extends JFrame{ //Inherit (gain access to all methods and fi
         this.setLayout(null); //Prevent the "layout manager" from changing the positions of components, which initially happened before ChatGPT suggested adding this line
         this.setVisible(true);//Show the GUI window
         
-        //Create the panel (which holds text and images) and add to frame (window)
-        petPanel = new PetPanel();
-        petPanel.setBounds(0, 0, PANEL_WIDTH, PANEL_HEIGHT);
-        this.add(petPanel);
+        //Create the panel which holds welcome message and add to frame (window)
+        homePanel = new HomePanel();
+        homePanel.setBounds(0, 0, PANEL_WIDTH, PANEL_HEIGHT);
+        this.add(homePanel);
+        homePanel.setVisible(true);//Show the welcome message panel
         
         //Initialise buttons
         dogButton = new JButton("Dog");
         catButton = new JButton("Cat");
         otterButton = new JButton("Otter");
         
-        //Set the positions and sizes of each button and add them to window
-        dogButton.setBounds(300, 250, 100, 70); 
-        catButton.setBounds(600, 250, 100, 70);
-        otterButton.setBounds(900, 250, 100, 70);
+        //add buttons to panel and show them
         this.add(dogButton);
         this.add(catButton);
         this.add(otterButton);
+        dogButton.setBounds(300, 250, 100, 70); 
+        catButton.setBounds(600, 250, 100, 70);
+        otterButton.setBounds(900, 250, 100, 70);
+        this.revalidate(); //Tell swing to update what's in the panel
+        this.repaint(); //Re-display panel after update
         
+        //Add action listeners to buttons so that the progrqam responds appropriately to button clicks
+        dogButton.addActionListener(new ActionListener(){
+            /**
+             * Clear the home page and show a dog and its attributes
+             * Called by Swing when the dog button is clicked
+             * Overrides the actionPerformed class in the java.awt.event.ActionListener interface (a class with "empty methods")
+             * @param event -- stores details of the input event occured -- in this case the button click 
+             */
+            public void actionPerformed(ActionEvent event){
+                homePanel.setVisible(false);
+                petPanel = new PetPanel("Pedro", "dog"); //I initially put the name and pet type the wrong way round and ChatGPT caught my error
+                petPanel.setBounds(0, 0, PANEL_WIDTH, PANEL_HEIGHT); //Set location of the panel for displaying the dog
+                add(petPanel); //Add panel to window
+                hideButtons();
+            }
+            
+        });  
+        
+        catButton.addActionListener(new ActionListener(){
+            /**
+             * Clear the home page and show a cat and its attributes
+             * Called by Swing when the cat button is clicked
+             * Overrides the actionPerformed class in the java.awt.event.ActionListener interface (a class with "empty methods")
+             * @param event -- stores details of the input event occured -- in this case the button click 
+             */
+            public void actionPerformed(ActionEvent event){
+                homePanel.setVisible(false);
+                petPanel = new PetPanel("Kitty", "cat");//I initially put the name and pet type the wrong way round and ChatGPT caught my error
+                petPanel.setBounds(0, 0, PANEL_WIDTH, PANEL_HEIGHT);
+                add(petPanel);
+                hideButtons();
+            }
+            
+        }); 
+        otterButton.addActionListener(new ActionListener(){
+            /**
+             * Clear the home page and show an otter and its attributes
+             * Called by Swing when the otter button is clicked
+             * Overrides the actionPerformed class in the java.awt.event.ActionListener interface (a class with "empty methods")
+             * @param event -- stores details of the input event occured -- in this case the button click 
+             */
+            public void actionPerformed(ActionEvent event){
+                homePanel.setVisible(false);
+                petPanel = new PetPanel("晉佑", "otter");//I initially put the name and pet type the wrong way round and ChatGPT caught my error
+                petPanel.setBounds(0, 0, PANEL_WIDTH, PANEL_HEIGHT);
+                add(petPanel);
+                hideButtons();
+            }
+            
+        });
+    }
+    /**
+     * Override the paint method from the JFrame superclass
+     * Within this method, call the original method to initialise the GUI
+     * Then,render the panels and buttons
+     * @param g - object of the Graphics class which helps us draw things in the GUI
+     */
+    public void paint(Graphics g){
+        super.paint(g); //Call original method
+        paintComponents(g); //ChatGPT told me to do this, because swing was designed for us to call methods to paint components and only painting the whole frame (super.paint(g)) may result in some components not showing 
     }
     
     /**
-     * Call the paint method from the JFrame superclass to initialise the GUI window
-     * This method gets called automatically
+     * Hide all buttons
+     * ChatGPT reminded me to hide the buttons after the pet is shown
      */
-    public void paint(Graphics g){ //Method to override the paint method
-        super.paint(g); //Call the original paint method
+    public void hideButtons(){
+        dogButton.setVisible(false);
+        catButton.setVisible(false);
+        otterButton.setVisible(false);
     }
     
     /**
@@ -69,4 +136,5 @@ public class PetGUI extends JFrame{ //Inherit (gain access to all methods and fi
     public static void main(String [] args){
         PetGUI petGui = new PetGUI();
     }
+    
 }

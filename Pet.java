@@ -67,7 +67,7 @@ public class Pet
      * Return the maximum weight the pet can survive at
      * @return maxWeight -- maximum weight allowed for the pet
      */
-    public double getMaxWeight(){
+    public double getMax(){
         return this.maxWeight;
     }
     
@@ -75,7 +75,7 @@ public class Pet
      * Return the minimum weight the pet can survive at
      * @return minWeight -- minimum weight allowed for the pet
      */
-    public double getMinWeight(){
+    public double getMin(){
         return this.minWeight;
     }
     
@@ -125,5 +125,13 @@ public class Pet
      */
     public String getName(){
         return this.name;
+    }
+    
+    /**
+     * Return the metabolim of the pet, in how many Kg it'll lose per hour without food (easier for the user)
+     * @return metabolism - metabolism of pet
+     */
+    public double getMet(){
+        return this.metabolism;
     }
 }

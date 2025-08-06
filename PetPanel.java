@@ -15,7 +15,7 @@ import javax.swing.JButton;
 public class PetPanel extends JPanel //Inherits (gains access to all methods and fields of) from the JPanel class from Swing
 {
     // instance variables - replace the example below with your own
-    Pet pet;
+    Pet pet; //Pet to be displayed
     private int x; //The pet's x-coordinate
     private int y; //The pet's y-coordinate
     private int headWidth; //Width of pet's head
@@ -31,14 +31,14 @@ public class PetPanel extends JPanel //Inherits (gains access to all methods and
     private int legGap; //Gap between each leg
     /**
      * Constructor for objects of class PetPanel
-     * @param - String petType - type of pet to display
-     * @param - String petName - name of pet to display
+     * @param - Pet pet -- pet to be displayed
      */
-    public PetPanel(String petName, String petType)
+    public PetPanel(Pet pet)
     {
         // initialise instance variables
+        this.pet = pet;
         headHeight = 100;
-        if(petType.equals("otter")){
+        if(pet.getType().equals("otter")){
             headWidth = headHeight * 3/2;
         }
         else{
@@ -55,7 +55,6 @@ public class PetPanel extends JPanel //Inherits (gains access to all methods and
         y = 300;
         leg1x = x - bodyLength/2;
         legGap = bodyWidth/6;
-        pet = new Pet(petType, petName);
     }
     
     /**

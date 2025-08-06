@@ -15,6 +15,8 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.awt.GridLayout;
+import java.awt.FlowLayout;
 
 public class PetGUI extends JFrame{ //Inherit (gain access to all methods and fields) from JFrame, a class that helps make the "frame", in this case i.e. app window
     JButton dogButton; //Button for creating dog
@@ -34,7 +36,7 @@ public class PetGUI extends JFrame{ //Inherit (gain access to all methods and fi
         this.setTitle("Pet Interaction Game");
         this.setLocationRelativeTo(null); //Window centred relative to nothing, therefore centred on the screen
         this.setSize(1500, 1500);
-        this.setLayout(null); //Prevent the "layout manager" from changing the positions of components, which initially happened before ChatGPT suggested adding this line
+        this.setLayout(new FlowLayout()); //
         this.setVisible(true);//Show the GUI window
         
         //Create the panel which holds welcome message and add to frame (window)
@@ -52,11 +54,9 @@ public class PetGUI extends JFrame{ //Inherit (gain access to all methods and fi
         this.add(dogButton);
         this.add(catButton);
         this.add(otterButton);
-        dogButton.setBounds(300, 250, 100, 70); 
-        catButton.setBounds(600, 250, 100, 70);
-        otterButton.setBounds(900, 250, 100, 70);
-        this.revalidate(); //Tell swing to update what's in the panel
-        this.repaint(); //Re-display panel after update
+        dogButton.setSize(100, 50); 
+        catButton.setSize(100, 50);
+        otterButton.setSize(100, 50);
         
         //Add action listeners to buttons so that the progrqam responds appropriately to button clicks
         dogButton.addActionListener(new ActionListener(){
@@ -68,9 +68,7 @@ public class PetGUI extends JFrame{ //Inherit (gain access to all methods and fi
              */
             public void actionPerformed(ActionEvent event){
                 homePanel.setVisible(false);
-                petPanel = new PetPanel("Pedro", "dog"); //I initially put the name and pet type the wrong way round and ChatGPT caught my error
-                petPanel.setBounds(0, 0, PANEL_WIDTH, PANEL_HEIGHT); //Set location of the panel for displaying the dog
-                add(petPanel); //Add panel to window
+                addPetPanel("Pedro", "dog"); //I initially put the name and pet type the wrong way round and ChatGPT caught my error
                 hideButtons();
             }
             
@@ -85,9 +83,7 @@ public class PetGUI extends JFrame{ //Inherit (gain access to all methods and fi
              */
             public void actionPerformed(ActionEvent event){
                 homePanel.setVisible(false);
-                petPanel = new PetPanel("Kitty", "cat");//I initially put the name and pet type the wrong way round and ChatGPT caught my error
-                petPanel.setBounds(0, 0, PANEL_WIDTH, PANEL_HEIGHT);
-                add(petPanel);
+                addPetPanel("Kitty", "cat");//I initially put the name and pet type the wrong way round and ChatGPT caught my error
                 hideButtons();
             }
             
@@ -101,10 +97,8 @@ public class PetGUI extends JFrame{ //Inherit (gain access to all methods and fi
              */
             public void actionPerformed(ActionEvent event){
                 homePanel.setVisible(false);
-                petPanel = new PetPanel("晉佑", "otter");//I initially put the name and pet type the wrong way round and ChatGPT caught my error
-                petPanel.setBounds(0, 0, PANEL_WIDTH, PANEL_HEIGHT);
-                add(petPanel);
                 hideButtons();
+                addPetPanel("晉佑", "otter");
             }
             
         });
@@ -129,6 +123,23 @@ public class PetGUI extends JFrame{ //Inherit (gain access to all methods and fi
         catButton.setVisible(false);
         otterButton.setVisible(false);
     }
+    
+    /**
+     * Create, set location of, and display the panel for the pet image
+     * @param String petName -- name of pet
+     * @param String petType -- type of pet
+     */
+    public void addPetPanel(String petName, String petType){
+        Pet pet = new Pet(petType, petName); //Create the pet to be displayed in the panel
+        petPanel = new PetPanel(pet);
+        petPanel.setBounds(0, 0, PANEL_WIDTH, PANEL_HEIGHT);
+        add(petPanel);
+    }
+    
+    /**
+     * Create, set location of, and display the panel for the pet's attributes
+     */
+    
     
     /**
      * Main method

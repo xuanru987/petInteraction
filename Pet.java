@@ -1,7 +1,6 @@
 import java.util.HashMap;
 import ecs100.*;
 import java.awt.Color;
-import java.awt.Image;
 import javax.swing.ImageIcon;
 
 /**
@@ -22,37 +21,42 @@ public class Pet
     private double maxWeight; //Maximum weight to stay alive
     private double metabolism; //Metabolism, in how many Kg it'll lose per hour without food (easier for the user)
     private int age; //Age of pet in yrs
-    
-    private static final Image bodyIm = new ImageIcon("C:/Users/celes/petInteraction/Body.png").getImage();; //Image of body
-    private static final Image legIm = new ImageIcon("C:/Users/celes/petInteraction/Leg.png").getImage(); //Image of leg
-    private Image headIm; //Image of head
-    
+    private String image; //Image of head
+    private int imageX; //X-coordinate of image
+    private int imageY; //Y-coordinate of image
+    private static final int LEFT_ATTRIBUTES = 20; //Left side of left column attributes
+    private int rightAttributes; //Right side of right column attributes 
     /**
      * Constructor for objects of class Pet
      */
-    public Pet(String type, String name)
+    public Pet(String type, String name, double initialWeight)
     {
         // initialise instance variables
         this.type = type;
         this.name = name;
         this.age = 0;
-        
-        if (type.equals("dog")){
-            this.weight = 0.2;
-            headIm = new ImageIcon("C:/Users/celes/petInteraction/Dog.png").getImage(); //Set the haed image to a dog head image
-        }
-        else if (type.equals("cat")){
-            this.weight = 0.1;
-            headIm = new ImageIcon("C:/Users/celes/petInteraction/Cat.png").getImage(); //Set the haed image to a cat head image
-        }
-        else if(type.equals("otter")){
-            this.weight = 1.0;
-            headIm = new ImageIcon("C:/Users/celes/petInteraction/Otter.png").getImage(); //Set the haed image to a cat head image
-        }
+        this.weight = initialWeight;
         //Calculate other weight-related variables from the pet's weight
         maxWeight = weight * 2;
         minWeight = weight/2;
         metabolism = weight * 0.003;
+        
+        if (type.equals("dog")){
+            image = "Dog.jpg";
+        }
+        else if (type.equals("cat")){
+            image = "Cat.jpg";
+        }
+        else{
+            image = "Otter.jpg";
+        }
+    }
+    
+    /**
+     * Display image of pet
+     */
+    public void displayIm(){
+        UI.drawImage(image, 100, 100);
     }
     
     /**
@@ -88,27 +92,11 @@ public class Pet
     }
     
     /**
-     * Return image of each leg of pet
-     * @return leg -- leg image of pet
-     */
-    public Image getLeg(){
-        return this.legIm;
-    }
-    
-    /**
-     * Return image of body of pet
-     * @return body -- image of body of pet
-     */
-    public Image getBody(){
-        return this.bodyIm;
-    }
-    
-    /**
      * Return image of the head of the pet
      * @return head -- head image of pet
      */
-    public Image getHead(){
-        return this.headIm;
+    public String getIm(){
+        return this.image;
     }
     
     /**

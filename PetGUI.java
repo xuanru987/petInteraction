@@ -10,18 +10,30 @@ import java.awt.Font;
 import ecs100.*;
 
 public class PetGUI{
-    private Pet pet;
+    private Pet pet; //The pet in the game
+    private String previewedType; //The type of pet being previewed
     private int leftAttributes; //x-coordinate of attributes on the left side
     private int rightAttributes; //x-coordinate of attributes on the right side
     private int topAttributes; //y-coordinate of attributes at the top
     private int attSpace; //Space between the top of each attribute
+    
     private static final String SHOW_MORE = "Show more....jpg"; //"Show more" button for attributes
     private static final String SHOW_LESS = "Show less....jpg"; //"Show more" button for attributes
+    private static final String SELECT = "Select.jpg"; //"Select" button for pets
+    private static final String DOG_IM = "Dog.jpg"; //Image of the dog
+    private static final String CAT_IM = "Cat.jpg"; //Image of the cat
+    private static final String OTTER_IM = "Otter.jpg"; //Image of the otter
+    
     private int showMoreWidth; //Width of "show more" button
     private int showMoreHeight; //Height of "show more" button
     private int showMoreLeft; //Left side of "show more" button
     private int showMoreTop; //Y-coordinate of top of "show more" button
     private int showLessLeft; //Left side of "show less" button
+    private int selectLeft; //Left side of "select" button
+    private int selectTop; //Top of "select" button
+    private int selectWidth; //Width of "select" button
+    private int selectHeight; //Height of "select" button
+    
     private boolean petPresent; //Whether there is already a pet
     
     public PetGUI(){
@@ -35,61 +47,80 @@ public class PetGUI{
         attSpace = 40;
         showMoreWidth = 50;
         showMoreHeight = 20;
-        showMoreLeft = rightAttributes;
+        showMoreLeft = leftAttributes;
         showMoreTop = topAttributes + 20;
         showLessLeft = showMoreLeft + showMoreWidth + 1;
         petPresent = false;
+        selectLeft = 440;
+        selectTop = 230;
+        selectWidth = 150;
+        selectHeight = 60;
     }
     /**
      * Display welcome message
      */
     public void welcome(){
-        UI.println("Welcome to Pet Interactor. Bring a pet home by clicking a button :)");
+        UI.drawString("Welcome to Pet Interactor. Bring a pet home by clicking a button :)", 80, 50);
     }
     
     /**
-     * Create and show a dog
+     *Show a dog for preview
      */
     public void showDog(){
         if(petPresent == false){
-        this.pet = new Pet("dog", "Pedro", 0.2);
-        petPresent = true;
-        pet.displayIm();
-        showAttributes();
+        UI.clearGraphics();
+        UI.drawImage(SELECT, selectLeft, selectTop, selectWidth, selectHeight);
+        UI.drawImage(DOG_IM, 100, 100);
+        previewedType = "dog";
         }
     }
     
     /**
-     * Create and show a cat
+     *Show a cat for preview
      */
     public void showCat(){
         if(petPresent == false){
-        this.pet = new Pet("cat", "Kitty", 0.1);
-        petPresent = true;
-        pet.displayIm();
-        showAttributes();
+        UI.clearGraphics();
+        UI.drawImage(SELECT, selectLeft, selectTop, selectWidth, selectHeight);
+        UI.drawImage(CAT_IM, 100, 100);
+        previewedType = "cat";
+    }
+    }
+    
+    /**
+     * Show an otter for preview
+     */
+    public void showOtter(){
+        if(petPresent == false){
+        UI.clearGraphics();
+        UI.drawImage(SELECT, selectLeft, selectTop, selectWidth, selectHeight);
+        UI.drawImage(OTTER_IM, 80, 120);
+        previewedType = "otter";
         }
     }
     
     /**
-     * Create and show an otter
+     * Create and show a certain pet and its attributes
+     * @param String type - type of animal
+     * @param String name - name of pet
+     * @param double weight - initial weight
      */
-    public void showOtter(){
-        if(petPresent == false){
-        this.pet = new Pet("otter", "晉佑", 1.0);
-        petPresent = true;
+    public void createPet(String type, String name){
+        //MathGPT spotted that I had an "if petPresent == false condition", which would stop this method from being called after clicking "select", so I removed the condition
+        //24/8/25
+        UI.eraseString("Welcome to Pet Interactor. Bring a pet home by clicking a button :)", 80, 50);
+        this.pet = new Pet(type, name);
         pet.displayIm();
         showAttributes();
-        }
     }
     
     /**
      * Show the attributes of the pet
      */
     public void showAttributes(){
-        UI.drawString("Name: " + pet.getName(), leftAttributes, topAttributes);
-        UI.drawString("Age: " + pet.getAge(), leftAttributes, topAttributes + attSpace);
-        UI.drawString("Weight: " + pet.getWeight(), rightAttributes, topAttributes);
+        UI.drawString("Name: " + pet.getName(), rightAttributes, topAttributes);
+        UI.drawString("Age: " + pet.getAge(), rightAttributes, topAttributes + attSpace);
+        UI.drawString("Current weight: " + pet.getWeight(), leftAttributes, topAttributes);
         UI.drawImage(SHOW_MORE, showMoreLeft, showMoreTop, showMoreWidth, showMoreHeight);
     }
     
@@ -98,15 +129,16 @@ public class PetGUI{
      * Try fix the hard coding?
      */
     public void extraAttributes(){
-        UI.drawString("Min weight: " + pet.getMin(), rightAttributes, topAttributes + attSpace * 2);
-        UI.drawString("Max weight: " + pet.getMax(), rightAttributes, topAttributes + attSpace * 3);
-        UI.drawString("Kgs it'll lose per h ", rightAttributes, topAttributes + attSpace * 4);
-        UI.drawString("without food", rightAttributes, topAttributes + attSpace * 5);
-        UI.drawString("" + pet.getMet(), rightAttributes, topAttributes + attSpace * 6);
+        UI.setColor(Color.green);
+        UI.drawString("Min weight at this age (or else it dies): " + pet.getMin() * 1000 + " g", leftAttributes, topAttributes + attSpace * 2);
+        UI.drawString("Max weight at this age (or else it dies): " + pet.getMax() * 1000 + " g", leftAttributes, topAttributes + attSpace * 3);
+        UI.drawString("Weight lost per h without food: " + pet.getMet() * 1000 + " g", leftAttributes, topAttributes + attSpace * 4);
         UI.drawImage(SHOW_LESS, showLessLeft, showMoreTop, showMoreWidth, showMoreHeight);
+        UI.setColor(Color.black);
     }
+    
     /**
-     * Method to responed to mouse input
+     * Method to respond to mouse input
      * @param - String action - type of mouse action
      * @param double x - x-coordinate of mouse action
      * @param double y - y-coordinate of mouse action
@@ -120,6 +152,15 @@ public class PetGUI{
                 UI.clearGraphics();
                 this.pet.displayIm();
                 showAttributes();
+            }
+            if(x >=selectLeft && x <= selectLeft + selectWidth && y >= selectTop && y <= selectTop + selectHeight && petPresent == false){
+                String petName;
+                petPresent =  true; //Record that there is already a pet, so that the user can't choose other pets now
+                UI.eraseRect(selectLeft, selectTop, selectWidth, selectHeight); //Erase the "select" button
+                UI.drawString("What name would you like for your pet? Respond in the text panel on the left", 90, 60);
+                petName = UI.askString("Pet name: ");
+                createPet(previewedType, petName);
+                UI.eraseString("What name would you like for your pet? Respond in the text panel on the left", 90, 60);
             }
         }
     }

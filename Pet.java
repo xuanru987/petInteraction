@@ -24,32 +24,35 @@ public class Pet
     private String image; //Image of head
     private int imageX; //X-coordinate of image
     private int imageY; //Y-coordinate of image
-    private static final int LEFT_ATTRIBUTES = 20; //Left side of left column attributes
     private int rightAttributes; //Right side of right column attributes 
     /**
      * Constructor for objects of class Pet
      */
-    public Pet(String type, String name, double initialWeight)
+    public Pet(String type, String name)
     {
         // initialise instance variables
         this.type = type;
         this.name = name;
         this.age = 0;
-        this.weight = initialWeight;
-        //Calculate other weight-related variables from the pet's weight
-        maxWeight = weight * 2;
-        minWeight = weight/2;
-        metabolism = weight * 0.003;
         
         if (type.equals("dog")){
             image = "Dog.jpg";
+            weight = 0.2;
         }
         else if (type.equals("cat")){
             image = "Cat.jpg";
+            weight = 0.1;
         }
         else{
             image = "Otter.jpg";
+            weight = 1.0;
         }
+        
+        //Calculate other weight-related variables from the pet's weight
+        //MathGPT spotted that I put these lines above where this.weight was set and I moved them down (24/08/25)
+        maxWeight = weight * 2;
+        minWeight = weight/2;
+        metabolism = weight * 0.0005;
     }
     
     /**

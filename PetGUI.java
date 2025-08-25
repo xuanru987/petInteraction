@@ -8,6 +8,7 @@
 import java.awt.Color;
 import java.awt.Font;
 import ecs100.*;
+import java.util.HashMap;
 
 public class PetGUI{
     private Pet pet; //The pet in the game
@@ -34,27 +35,94 @@ public class PetGUI{
     private int selectWidth; //Width of "select" button
     private int selectHeight; //Height of "select" button
     
+    private double foodTop; //Top of the images of foods
+    private double foodLeft; //Left of the leftmost food image
+    private double foodWidth; //Width of the food images
+    private double foodHeight; //Height of the food images
+    private double foodGap; //Gap between each food
+    private double foodDistance; //Dstance between the left side of each food
+    
     private boolean petPresent; //Whether there is already a pet
+    private boolean foodsShown; //Whether the foods are shown
+    private boolean exerciseShown; //Whether the exercise options are shown
+    
+    private HashMap<Integer, String> dogFoods; //Foods available for dog -- index and image filename 
+    private HashMap<Integer, String> catFoods; //Foods available for cat -- index and image filename 
+    private HashMap<Integer, String> otterFoods; //Foods available for otter -- index and image filename 
+    
+    private HashMap<Integer, String> dogExercise; //Exercise options for dog -- index and image filename 
+    private HashMap<Integer, String> catExercise; //Exercise options for cat -- index and image filename 
+    private HashMap<Integer, String> otterExercise; //Exercise options for otter -- index and image filename 
     
     public PetGUI(){
+        
+        UI.initialise();
         UI.addButton("Dog", this :: showDog);
         UI.addButton("Cat", this :: showCat);
         UI.addButton("Otter", this :: showOtter);
+        UI.addButton("Foods", this :: showHideFoods);
+        UI.addButton("Exercise", this :: showHideExercise);
         UI.setMouseListener(this :: doMouse);
+        
         leftAttributes = 20;
         rightAttributes = 400;
         topAttributes = 20;
         attSpace = 40;
+        
         showMoreWidth = 50;
         showMoreHeight = 20;
         showMoreLeft = leftAttributes;
         showMoreTop = topAttributes + 20;
         showLessLeft = showMoreLeft + showMoreWidth + 1;
-        petPresent = false;
         selectLeft = 440;
         selectTop = 230;
         selectWidth = 150;
         selectHeight = 60;
+        
+        petPresent = false;
+        foodsShown = false;
+        exerciseShown = false;
+        
+        foodTop = 310;
+        foodLeft = 99;
+        foodWidth = 50;
+        foodHeight = 50;
+        foodGap = 50;
+        foodDistance = foodWidth + foodGap;
+        
+        dogFoods = new HashMap<Integer, String>();
+        dogFoods.put(0, "dogFood.jpg");
+        dogFoods.put(1, "meat.jpg");
+        dogFoods.put(2, "pizza.jpg");
+        dogFoods.put(3, "sushi.jpg");
+        
+        catFoods = new HashMap<Integer, String>();
+        catFoods.put(0, "catFood.jpg");
+        catFoods.put(1, "meat.jpg");
+        catFoods.put(2, "cockroach.jpg");
+        catFoods.put(3, "mouse.jpg");
+        
+        otterFoods = new HashMap<Integer, String>();
+        otterFoods.put(0, "fish.jpg");
+        otterFoods.put(1, "crab.jpg");
+        otterFoods.put(2, "pizza.jpg");
+        otterFoods.put(3, "sushi.jpg");
+        
+        dogExercise = new HashMap<Integer, String>();
+        dogExercise.put(0, "field.jpg");
+        dogExercise.put(1, "pool.jpg");
+        dogExercise.put(2, "ball.jpg");
+        dogExercise.put(3, "treadmill.jpg");
+        
+        catExercise = new HashMap<Integer, String>();
+        catExercise.put(0, "field.jpg");
+        catExercise.put(1, "catToy.jpg");
+        catExercise.put(2, "ball.jpg");
+        catExercise.put(3, "treadmill.jpg");
+        
+        otterExercise = new HashMap<Integer, String>();
+        otterExercise.put(0, "pool.jpg");
+        otterExercise.put(1, "ball.jpg");
     }
     /**
      * Display welcome message
@@ -84,7 +152,7 @@ public class PetGUI{
         UI.drawImage(SELECT, selectLeft, selectTop, selectWidth, selectHeight);
         UI.drawImage(CAT_IM, 100, 100);
         previewedType = "cat";
-    }
+        }
     }
     
     /**
@@ -164,6 +232,68 @@ public class PetGUI{
             }
         }
     }
+    
+    /**
+     * If foods aren't already shown, display the images of the correct foods for the animal type
+     * If already shown, hide the foods
+     */
+    public void showHideFoods(){
+        if(petPresent == true && foodsShown == false){
+            if(previewedType == "dog"){
+                for (int i : dogFoods.keySet()){
+                UI.drawImage(dogFoods.get(i), foodLeft + foodDistance * i, foodTop, foodWidth, foodHeight); 
+                }
+            }
+            else if(previewedType == "cat"){
+                for (int i : catFoods.keySet()){
+                UI.drawImage(catFoods.get(i), foodLeft + foodDistance * i, foodTop, foodWidth, foodHeight); 
+                } 
+            }
+            else{
+                for (int i : otterFoods.keySet()){
+                    UI.drawImage(otterFoods.get(i), foodLeft + foodDistance * i, foodTop, foodWidth, foodHeight); 
+                }
+            }
+            foodsShown = true;
+        }
+        else if(petPresent == true && foodsShown == true){
+            for(int i = 0; i < 4; i ++){
+                UI.eraseRect(foodLeft + foodDistance * i, foodTop, foodWidth, foodHeight);
+            }
+            foodsShown = false;
+        }
+    }
+    
+    /**
+     * If not shown yet, show all exercise options applicable to the animal type 
+     * If already shown, hide the exercise options
+     */
+    public void showHideExercise(){
+        if(petPresent == true && exerciseShown == false){
+            if(previewedType == "dog"){
+                for (int i : dogExercise.keySet()){
+                UI.drawImage(dogExercise.get(i), foodLeft + foodDistance * i, foodTop, foodWidth, foodHeight); 
+                }
+            }
+            else if(previewedType == "cat"){
+                for (int i : catExercise.keySet()){
+                UI.drawImage(catExercise.get(i), foodLeft + foodDistance * i, foodTop, foodWidth, foodHeight); 
+                } 
+            }
+            else{
+                for (int i : otterExercise.keySet()){
+                    UI.drawImage(otterExercise.get(i), foodLeft + foodDistance * i, foodTop, foodWidth, foodHeight); 
+                }
+            }
+            exerciseShown = true;
+        }
+        else if(petPresent == true && exerciseShown == true){
+            for(int i = 0; i < 4; i ++){
+                UI.eraseRect(foodLeft + foodDistance * i, foodTop, foodWidth, foodHeight);
+            }
+            exerciseShown = false;
+        }
+    }  
     
     /**
      * Main method

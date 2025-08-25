@@ -38,14 +38,20 @@ public class Pet
         if (type.equals("dog")){
             image = "Dog.jpg";
             weight = 0.2;
+            imageX = 100;
+            imageY = 100;
         }
         else if (type.equals("cat")){
             image = "Cat.jpg";
             weight = 0.1;
+            imageX = 100;
+            imageY = 100;
         }
         else{
             image = "Otter.jpg";
             weight = 1.0;
+            imageX = 80;
+            imageY = 120;
         }
         
         //Calculate other weight-related variables from the pet's weight
@@ -59,7 +65,7 @@ public class Pet
      * Display image of pet
      */
     public void displayIm(){
-        UI.drawImage(image, 100, 100);
+        UI.drawImage(image, imageX, imageY);
     }
     
     /**

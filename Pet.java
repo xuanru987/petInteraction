@@ -131,4 +131,12 @@ public class Pet
     public double getMet(){
         return this.metabolism;
     }
+    
+    /**
+     * Change its own weight from digesting food or exercising
+     * @param double ratio = added or subtracted weight / pet's weight
+     */
+    public void changeWeight(double ratio){
+        this.weight = weight * (1 + ratio);
+    }
 }

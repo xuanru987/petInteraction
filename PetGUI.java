@@ -2,7 +2,7 @@
  * A GUI that interacts with the user to allow them to create a pet and take care of it
  * Displays a welcome message at first 
  * After pet selection the pet, its attributes, the player's resources and the pet's behaviour are displayed
- * Sources: ChatGPT 2/9/25, 3/9/25
+ * Sources: ChatGPT 2/9/25, 3/9/25, 4/9/25
  * @author Sydney Liu
  * @version 26/07/2025
  */
@@ -88,7 +88,7 @@ public class PetGUI{
         foodsShown = false;
         exerciseShown = false;
         
-        foodTop = 310;
+        foodTop = 340;
         foodLeft = 99;
         foodWidth = 50;
         foodHeight = 50;
@@ -136,7 +136,7 @@ public class PetGUI{
         if(petPresent == false){
         UI.clearGraphics();
         UI.drawImage(SELECT, selectLeft, selectTop, selectWidth, selectHeight);
-        UI.drawImage(DOG_IM, 100, 100);
+        UI.drawImage(DOG_IM, 100, 55);
         previewedType = "dog";
         }
     }
@@ -148,7 +148,7 @@ public class PetGUI{
         if(petPresent == false){
         UI.clearGraphics();
         UI.drawImage(SELECT, selectLeft, selectTop, selectWidth, selectHeight);
-        UI.drawImage(CAT_IM, 100, 100);
+        UI.drawImage(CAT_IM, 100, 55);
         previewedType = "cat";
         }
     }
@@ -160,7 +160,7 @@ public class PetGUI{
         if(petPresent == false){
         UI.clearGraphics();
         UI.drawImage(SELECT, selectLeft, selectTop, selectWidth, selectHeight);
-        UI.drawImage(OTTER_IM, 80, 120);
+        UI.drawImage(OTTER_IM, 80, 80);
         previewedType = "otter";
         }
     }
@@ -214,6 +214,7 @@ public class PetGUI{
      */
     public void doMouse(String action, double x, double y){
         if (action.equals("clicked")){
+            UI.println(x + ", " + y);
             if(inRect(x, y, showMoreLeft, showMoreLeft + showMoreWidth, showMoreTop, showMoreTop + showMoreHeight)){
                 extraAttributes();
             }
@@ -226,10 +227,10 @@ public class PetGUI{
                 String petName;
                 petPresent =  true; //Record that there is already a pet, so that the user can't choose other pets now
                 UI.eraseRect(selectLeft, selectTop, selectWidth, selectHeight); //Erase the "select" button
-                UI.drawString("What name would you like for your pet? Respond in the text panel on the left", 90, 60);
+                UI.drawString("What name would you like for your pet? Respond in the text panel on the left", 50, 60);
                 petName = UI.askString("Pet name: ");
+                UI.eraseString("What name would you like for your pet? Respond in the text panel on the left", 50, 60);
                 createPet(previewedType, petName, 0, animalWeights.get(previewedType));
-                UI.eraseString("What name would you like for your pet? Respond in the text panel on the left", 90, 60);
             }
             if(foodsShown == true) {//MathGPT reminded me to put == and not = (29/8/25) //This also means petPresent == true
                 UI.eraseString("Current weight: " + pet.getWeight() + " kg", leftAttributes, topAttributes); //Erase the pet's weight
@@ -255,6 +256,7 @@ public class PetGUI{
             pet.showDead();
             UI.drawString("Choose a new pet by clicking one of the buttons.", 80, 95);
             petPresent = false;
+            
         }
     }
     
@@ -327,6 +329,7 @@ public class PetGUI{
      * Main method
      */
     public static void main(String [] args){
+        UI.println("Chek, screenshot weight");
         PetGUI petGui = new PetGUI();
         petGui.welcome();
     }

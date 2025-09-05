@@ -45,19 +45,19 @@ public class Pet
             image = "Dog.jpg";
             deadImage = "deadDog.jpg";
             imageX = 100;
-            imageY = 100;
+            imageY = 55;
         }
         else if (type.equals("cat")){
             image = "Cat.jpg";
             deadImage = "deadCat.jpg";
             imageX = 100;
-            imageY = 100;
+            imageY = 55;
         }
         else{
             image = "Otter.jpg";
             deadImage = "deadOtter.jpg";
             imageX = 80;
-            imageY = 120;
+            imageY = 80;
         }
         
         animalWeights = new HashMap<String, Double>();
@@ -159,12 +159,13 @@ public class Pet
     }
     
     /**
-     * Change its own weight from digesting food or exercising
+     * Change its own weight from digesting food or exercising, and update metabolism according to new weight
+     * ChatGPT told me that because Math.round() returns a long (integer), I need to add .0 to the denominators to make them doubles, otherwise java rounds the result of division to an integer which would become 0
      * @param double ratio = added or subtracted weight / pet's weight
      */
     public void changeWeight(double ratio){
-        this.weight = weight * (1 + ratio);
-        metabolism = this.weight * 0.0005; 
+        this.weight = Math.round(weight * (1 + ratio)* 10000)/10000.0; //Round adjusted weight to 4dp
+        metabolism = Math.round(weight * 0.0005 * 10000)/10000.0; //Round adjusted metabolism to 4dp
     }
     
     /**

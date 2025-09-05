@@ -4,6 +4,7 @@ import ecs100.*;
  * Exercise options for the pet in the interaction game
  * Can display themselves and subtract weight from the pet
  * @Sydney Liu
+ * Sources: ChatGPT
  * @27/8/25
  */
 public class Exercise
@@ -26,6 +27,8 @@ public class Exercise
     private double height; //Height of each food image
     private double gap; //Gap between each food image
     private double distance; //Distance between the left of each image
+    private double desGap; //Gap between images and their description
+    private final double textHeight = 10; //Height of text on UI
     /**
      * Constructor of objects of class Exercise
      * 
@@ -45,6 +48,7 @@ public class Exercise
         this.height = height;
         this.gap = gap;
         this.distance = width + gap;
+        desGap = 4;
         
         dogExercise = new HashMap<Integer, String>();
         dogExercise.put(0, "field.jpg");
@@ -61,6 +65,8 @@ public class Exercise
         otterExercise = new HashMap<Integer, String>();
         otterExercise.put(0, "pool.jpg");
         otterExercise.put(1, "ball.jpg");  
+        otterExercise.put(2, "ottersPlaying.jpg");
+        otterExercise.put(3, "juggling.jpg");
         
         animalsExercise = new HashMap<String, HashMap<Integer, String>>();
         animalsExercise.put("dog", dogExercise);
@@ -82,7 +88,18 @@ public class Exercise
     public void showExercise()
     {
         for (int i : animalsExercise.get(pet.getType()).keySet()){
-            UI.drawImage(animalsExercise.get(pet.getType()).get(i), left + distance * i, top, width, height); 
+            UI.drawImage(animalsExercise.get(pet.getType()).get(i), left + distance * i, top, width, height);
+            if(animalsExercise.get(pet.getType()).get(i).equals("catToy.jpg")){
+                UI.drawString(" cat toy", left + distance * i, top - desGap);
+            }
+            else if(animalsExercise.get(pet.getType()).get(i).equals("juggling.jpg")){
+                UI.drawString("juggling", left + distance * i, top - desGap * 2 - textHeight);
+                UI.drawString("pebbles", left + distance * i, top - desGap);
+            }
+            else if(animalsExercise.get(pet.getType()).get(i).equals("ottersPlaying.jpg")){
+                UI.drawString("playing with", left + distance * i, top - desGap * 2 - textHeight);
+                UI.drawString("other otters", left + distance * i, top - desGap);
+            }
         }
     }
     
@@ -90,8 +107,19 @@ public class Exercise
      * Hide all exercise options
      */
     public void hideExercise(){
-        for(int i = 0; i < 4; i ++){
+        for(int i : animalsExercise.get(pet.getType()).keySet()){
                 UI.eraseRect(left + distance * i, top, width, height);
+                if(animalsExercise.get(pet.getType()).get(i).equals("catToy.jpg")){
+                UI.eraseString(" cat toy", left + distance * i, top - desGap);
+                }
+                else if(animalsExercise.get(pet.getType()).get(i).equals("juggling.jpg")){
+                UI.eraseString("juggling", left + distance * i, top - desGap * 2 - textHeight);
+                UI.eraseString("pebbles", left + distance * i, top - desGap);
+                }
+                else if(animalsExercise.get(pet.getType()).get(i).equals("ottersPlaying.jpg")){
+                UI.eraseString("playing with", left + distance * i, top - desGap * 2 - textHeight);
+                UI.eraseString("other otters", left + distance * i, top - desGap);
+                }
                 pet.displayIm(); //eraseRect() also erases part of the pet so we need to redraw it
         }
     }

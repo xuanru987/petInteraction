@@ -59,7 +59,6 @@ public class PetGUI{
     private long tSinceQuit; //Time since the user last quit in (h)
      
     public PetGUI(){
-        
         UI.initialise();
         UI.addButton("Dog", this :: showDog);
         UI.addButton("Cat", this :: showCat);
@@ -233,13 +232,18 @@ public class PetGUI{
                 createPet(previewedType, petName, 0, animalWeights.get(previewedType));
             }
             if(foodsShown == true) {//MathGPT reminded me to put == and not = (29/8/25) //This also means petPresent == true
-                UI.eraseString("Current weight: " + pet.getWeight() + " kg", leftAttributes, topAttributes); //Erase the pet's weight
-                foods.addWeight(x, y); //If the user clicks while the foods are shown, add an appropriate weight to the pet according to the food (or no food) clicked
-                UI.drawString("Current weight: " + pet.getWeight() + " kg", leftAttributes, topAttributes); //Re-display the pet's weight
+                UI.clearGraphics();
+                foods.playSound(x, y); //If the user clicked on a food image, play the appropriate sound
+                foods.displayEaten(x, y);
+                pet.bend();
+                foods.addWeight(x, y); //Add an appropriate weight to the pet according to the food (or no food) clicked
+                showAttributes();
+                foods.showFoods();
                 checkDead();
             }
             else if(exerciseShown == true) { //This also means petPresent == true
                 UI.eraseString("Current weight: " + pet.getWeight() + " kg", leftAttributes, topAttributes); //Erase the pet's weight
+                exercise.playSound(x, y); //If the user clicked on an exercse image, play the appropriate sound
                 exercise.subtractWeight(x, y); //If the user clicks while the exercise options are shown, subtract an appropriate weight from the pet according to the option (or no option) clicked
                 UI.drawString("Current weight: " + pet.getWeight() + " kg", leftAttributes, topAttributes); //Re-display the pet's weight
                 checkDead();
@@ -256,7 +260,6 @@ public class PetGUI{
             pet.showDead();
             UI.drawString("Choose a new pet by clicking one of the buttons.", 80, 95);
             petPresent = false;
-            
         }
     }
     
@@ -329,7 +332,6 @@ public class PetGUI{
      * Main method
      */
     public static void main(String [] args){
-        UI.println("Chek, screenshot weight");
         PetGUI petGui = new PetGUI();
         petGui.welcome();
     }

@@ -17,6 +17,7 @@ public class Exercise
     private HashMap<String, HashMap<Integer, String>> animalsExercise; //Each animal type paired with their respective exercise options
     
     private HashMap <String, Double> exerciseWeights; //The weight each type of exercise (by image filename) subtracts from pets -- by ratio to the pet's weight
+    private HashMap <String, String>exerciseSounds; //The sound each type of exercise (by image filename) produces  -- by filename of soundfile
     
     private Pet pet; //The pet the foods are for
 
@@ -77,8 +78,19 @@ public class Exercise
         exerciseWeights.put("field.jpg", 0.005);
         exerciseWeights.put("pool.jpg", 0.003);
         exerciseWeights.put("ball.jpg", 0.005);
-        exerciseWeights.put("treadmill.jpg", 0.002);
-        exerciseWeights.put("catToy.jpg", 0.003);
+        exerciseWeights.put("treadmill.jpg", 0.003);
+        exerciseWeights.put("catToy.jpg", 0.002);
+        exerciseWeights.put("ottersPlaying.jpg", 0.005);
+        exerciseWeights.put("juggling.jpg", 0.002);
+        
+        exerciseSounds = new HashMap<String, String>();
+        exerciseSounds.put("field.jpg", "runningSounds.wav");
+        exerciseSounds.put("pool.jpg", "lakeSwimming.wav");
+        exerciseSounds.put("ball.jpg", "ballSounds.wav");
+        exerciseSounds.put("treadmill.jpg", "runningSounds.wav");
+        exerciseSounds.put("catToy.jpg", "catToy.wav");
+        exerciseSounds.put("ottersPlaying.jpg", "lakeSwimming.wav");
+        exerciseSounds.put("juggling.jpg", "pebbles.wav");
     }
 
     /**
@@ -108,19 +120,19 @@ public class Exercise
      */
     public void hideExercise(){
         for(int i : animalsExercise.get(pet.getType()).keySet()){
-                UI.eraseRect(left + distance * i, top, width, height);
-                if(animalsExercise.get(pet.getType()).get(i).equals("catToy.jpg")){
+            UI.eraseRect(left + distance * i, top, width, height);
+            if(animalsExercise.get(pet.getType()).get(i).equals("catToy.jpg")){
                 UI.eraseString(" cat toy", left + distance * i, top - desGap);
-                }
-                else if(animalsExercise.get(pet.getType()).get(i).equals("juggling.jpg")){
+            }
+            else if(animalsExercise.get(pet.getType()).get(i).equals("juggling.jpg")){
                 UI.eraseString("juggling", left + distance * i, top - desGap * 2 - textHeight);
                 UI.eraseString("pebbles", left + distance * i, top - desGap);
-                }
-                else if(animalsExercise.get(pet.getType()).get(i).equals("ottersPlaying.jpg")){
+            }
+            else if(animalsExercise.get(pet.getType()).get(i).equals("ottersPlaying.jpg")){
                 UI.eraseString("playing with", left + distance * i, top - desGap * 2 - textHeight);
                 UI.eraseString("other otters", left + distance * i, top - desGap);
-                }
-                pet.displayIm(); //eraseRect() also erases part of the pet so we need to redraw it
+            }
+            pet.displayIm(); //eraseRect() also erases part of the pet so we need to redraw it
         }
     }
     
@@ -151,6 +163,20 @@ public class Exercise
             //If the point is on the image being checked,
             if (inRect(x, y, left + distance * i, left + distance * i + width, top, top + height)){ //MathGPT reminded me to parse in the edges of the images rather than left, top, width and height 29/8/25 
                  pet.changeWeight(-exerciseWeights.get(animalsExercise.get(pet.getType()).get(i))); //subtract the appropriate weight from the pet
+            }
+        }
+    }
+    
+    /**
+     * Check if a point is on the image of any exercise option
+     * If it is, play the corresponding sound
+     */
+    public void playSound(double x, double y){
+        for (int i : animalsExercise.get(pet.getType()).keySet()){ //Loop through the appropriate index - food image HashMap for the pet
+            //If the point is on the image being checked,
+            if (inRect(x, y, left + distance * i, left + distance * i + width, top, top + height)){ //MathGPT reminded me to parse in the edges of the images rather than left, top, width and height 29/8/25 
+                 SoundPlayer soundPlayer = new SoundPlayer(exerciseSounds.get(animalsExercise.get(pet.getType()).get(i)));
+                 soundPlayer.playSound();
             }
         }
     }

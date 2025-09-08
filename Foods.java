@@ -17,6 +17,7 @@ public class Foods
     //MathGPT told me that I needed to put <Integer, String> for the HashMap within, otherwise the HashMap is seen as raw 29/8/25
     
     private HashMap <String, Double>foodWeights; //The weight each food (by image filename) adds to pets -- by ratio to the pet's weight
+    private HashMap <String, String>foodSounds; //The sound each food (by image filename) makes when eaten -- by filename of soundfile
     
     private Pet pet; //The pet the foods are for
     
@@ -56,7 +57,7 @@ public class Foods
         dogFoods.put(3, "sushi.jpg");
         
         catFoods = new HashMap<Integer, String>();
-        catFoods.put(0, "catFood.jpg");
+        catFoods.put(0, "dogFood.jpg");
         catFoods.put(1, "meat.jpg");
         catFoods.put(2, "cockroach.jpg");
         catFoods.put(3, "mouse.jpg");
@@ -82,6 +83,18 @@ public class Foods
         foodWeights.put("mouse.jpg", 0.0025);
         foodWeights.put("fish.jpg", 0.002);
         foodWeights.put("crab.jpg", 0.004);
+        
+        foodSounds = new HashMap<String, String>();
+        foodSounds.put("dogFood.jpg", "eatingCrispyCookies.wav");
+        foodSounds.put("meat.jpg", "meatSounds.wav");
+        foodSounds.put("pizza.jpg", "munchingSounds.wav");
+        foodSounds.put("sushi.jpg", "munchingSounds.wav");
+        foodSounds.put("catFood.jpg", "eatingCrispyCookies.wav");
+        foodSounds.put("cockroach.jpg", "eatingCockroach.wav");
+        foodSounds.put("mouse.jpg", "meatSounds.wav");
+        foodSounds.put("fish.jpg", "fishSounds.wav");
+        foodSounds.put("crab.jpg", "fishSounds.wav");
+        
     }
 
     /**
@@ -121,6 +134,20 @@ public class Foods
         }
         return inRect;
     }
+    
+    /**
+     * Check if a point is in the image of any food
+     * If so, display the food eaten on the GUI, at the appropriate spot relative to the pet
+     */
+    public void displayEaten(double x, double y){
+        for (int i : animalsFoods.get(pet.getType()).keySet()){ //Loop through the appropriate index - food image HashMap for the pet
+            //If the point is on the image being checked,
+            if (inRect(x, y, left + distance * i, left + distance * i + width, top, top + height)){ //MathGPT reminded me to parse in the edges of the images rather than left, top, width and height 29/8/25 
+                 UI.drawImage((animalsFoods.get(pet.getType()).get(i)), pet.getFoodLeft(), pet.getFoodTop(), width, height); //add the appropriate weight to the pet
+            }
+        }
+    }
+    
     /**
      * Check if a point is in the image of any food
      * If it is, add the appropriate weight for the food to the animal 
@@ -133,4 +160,19 @@ public class Foods
             }
         }
     }
+    
+    /**
+     * Check if a point is in the image of any food
+     * If it is, play the appropriate sound for the food
+     */
+    public void playSound(double x, double y){
+        for (int i : animalsFoods.get(pet.getType()).keySet()){ //Loop through the appropriate index - food image HashMap for the pet
+            //If the point is on the image being checked,
+            if (inRect(x, y, left + distance * i, left + distance * i + width, top, top + height)){ //MathGPT reminded me to parse in the edges of the images rather than left, top, width and height 29/8/25 
+                 SoundPlayer soundPlayer = new SoundPlayer(foodSounds.get(animalsFoods.get(pet.getType()).get(i)));
+                 soundPlayer.playSound();
+            }
+        }
+    }
+    
 }

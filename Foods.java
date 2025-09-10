@@ -94,7 +94,6 @@ public class Foods
         foodSounds.put("mouse.jpg", "meatSounds.wav");
         foodSounds.put("fish.jpg", "fishSounds.wav");
         foodSounds.put("crab.jpg", "fishSounds.wav");
-        
     }
 
     /**
@@ -137,15 +136,22 @@ public class Foods
     
     /**
      * Check if a point is in the image of any food
-     * If so, display the food eaten on the GUI, at the appropriate spot relative to the pet
+     * If so, display the food the GUI, at the appropriate spot relative to the pet
      */
     public void displayEaten(double x, double y){
-        for (int i : animalsFoods.get(pet.getType()).keySet()){ //Loop through the appropriate index - food image HashMap for the pet
-            //If the point is on the image being checked,
-            if (inRect(x, y, left + distance * i, left + distance * i + width, top, top + height)){ //MathGPT reminded me to parse in the edges of the images rather than left, top, width and height 29/8/25 
-                 UI.drawImage((animalsFoods.get(pet.getType()).get(i)), pet.getFoodLeft(), pet.getFoodTop(), width, height); //add the appropriate weight to the pet
-            }
-        }
+        if(imageClicked(x, y) != ""){
+            UI.drawImage(imageClicked(x, y), pet.getFoodLeft(), pet.getFoodTop(), width, height); 
+        }        
+    }
+    
+    /**
+     * Check if a point is on the image of any food
+     * If so, hide the food on the GUI
+     */
+    public void hideEaten(double x, double y){
+        if(imageClicked(x, y) != ""){
+            UI.eraseRect(pet.getFoodLeft(), pet.getFoodTop(), width, height); 
+        }        
     }
     
     /**
@@ -153,26 +159,34 @@ public class Foods
      * If it is, add the appropriate weight for the food to the animal 
      */
     public void addWeight(double x, double y){
-        for (int i : animalsFoods.get(pet.getType()).keySet()){ //Loop through the appropriate index - food image HashMap for the pet
-            //If the point is on the image being checked,
-            if (inRect(x, y, left + distance * i, left + distance * i + width, top, top + height)){ //MathGPT reminded me to parse in the edges of the images rather than left, top, width and height 29/8/25 
-                 pet.changeWeight(foodWeights.get(animalsFoods.get(pet.getType()).get(i))); //add the appropriate weight to the pet
-            }
+        if(imageClicked(x, y) != ""){
+            pet.changeWeight(foodWeights.get(imageClicked(x, y))); //add the appropriate weight to the pet
         }
     }
     
     /**
-     * Check if a point is in the image of any food
+     * Check if a point (usually point of mouse click) is in the image of any food
      * If it is, play the appropriate sound for the food
      */
     public void playSound(double x, double y){
-        for (int i : animalsFoods.get(pet.getType()).keySet()){ //Loop through the appropriate index - food image HashMap for the pet
-            //If the point is on the image being checked,
-            if (inRect(x, y, left + distance * i, left + distance * i + width, top, top + height)){ //MathGPT reminded me to parse in the edges of the images rather than left, top, width and height 29/8/25 
-                 SoundPlayer soundPlayer = new SoundPlayer(foodSounds.get(animalsFoods.get(pet.getType()).get(i)));
-                 soundPlayer.playSound();
-            }
+        if(imageClicked(x, y) != ""){
+            SoundPlayer soundPlayer = new SoundPlayer(foodSounds.get(imageClicked(x, y)));
+            soundPlayer.playSound();
         }
     }
     
+    /**
+     * Check if a point (usually point of mouse click) is in the image of any food
+     * If it is, return food image file name
+     */
+    public String imageClicked(double x, double y){
+        String imageClicked = "";
+        for (int i : animalsFoods.get(pet.getType()).keySet()){ //Loop through the appropriate index - food image HashMap for the pet
+            //If the point is on the image being checked,
+            if (inRect(x, y, left + distance * i, left + distance * i + width, top, top + height)){ //MathGPT reminded me to parse in the edges of the images rather than left, top, width and height 29/8/25 
+                imageClicked = animalsFoods.get(pet.getType()).get(i); 
+            }
+        }
+        return imageClicked;
+    }
 }

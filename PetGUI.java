@@ -23,9 +23,9 @@ public class PetGUI{
     private static final String SHOW_MORE = "Show more....jpg"; //"Show more" button for attributes
     private static final String SHOW_LESS = "Show less....jpg"; //"Show more" button for attributes
     private static final String SELECT = "Select.jpg"; //"Select" button for pets
-    private static final String DOG_IM = "Dog.jpg"; //Image of the dog
-    private static final String CAT_IM = "Cat.jpg"; //Image of the cat
-    private static final String OTTER_IM = "Otter.jpg"; //Image of the otter
+    private static final String DOG_IM = "Dog.png"; //Image of the dog
+    private static final String CAT_IM = "Cat.png"; //Image of the cat
+    private static final String OTTER_IM = "Otter.png"; //Image of the otter
     
     private int showMoreWidth; //Width of "show more" button
     private int showMoreHeight; //Height of "show more" button
@@ -102,7 +102,6 @@ public class PetGUI{
         attributesReader = new ReadFromFile();
         previousAttributes = attributesReader.readAttributes();
         existingPet();
-        
     }
     
     /**
@@ -159,7 +158,7 @@ public class PetGUI{
         if(petPresent == false){
         UI.clearGraphics();
         UI.drawImage(SELECT, selectLeft, selectTop, selectWidth, selectHeight);
-        UI.drawImage(OTTER_IM, 80, 80);
+        UI.drawImage(OTTER_IM, 80, 120);
         previewedType = "otter";
         }
     }
@@ -236,6 +235,8 @@ public class PetGUI{
                 foods.playSound(x, y); //If the user clicked on a food image, play the appropriate sound
                 foods.displayEaten(x, y);
                 pet.bend();
+                foods.hideEaten(x, y);
+                pet.displayIm();
                 foods.addWeight(x, y); //Add an appropriate weight to the pet according to the food (or no food) clicked
                 showAttributes();
                 foods.showFoods();
@@ -244,6 +245,9 @@ public class PetGUI{
             else if(exerciseShown == true) { //This also means petPresent == true
                 UI.eraseString("Current weight: " + pet.getWeight() + " kg", leftAttributes, topAttributes); //Erase the pet's weight
                 exercise.playSound(x, y); //If the user clicked on an exercse image, play the appropriate sound
+                if(exercise.imageClicked(x, y) == "ball.jpg"){
+                    pet.bounceBall();
+                }
                 exercise.subtractWeight(x, y); //If the user clicks while the exercise options are shown, subtract an appropriate weight from the pet according to the option (or no option) clicked
                 UI.drawString("Current weight: " + pet.getWeight() + " kg", leftAttributes, topAttributes); //Re-display the pet's weight
                 checkDead();
@@ -287,6 +291,9 @@ public class PetGUI{
      */
     public void showHideFoods(){
         if(petPresent == true && foodsShown == false){
+            if(exerciseShown == true){
+                exercise.hideExercise();
+            }
             foods.showFoods();
             foodsShown = true;
             exerciseShown = false;

@@ -8,6 +8,7 @@ import javax.swing.ImageIcon;
  * A virtual pet users can interact with via a GUI (programmed in another class)
  * Has a name, weight, max and min weight to stay alive, metabolism, age, and possibly thirst/hydration
  * Can perform certain animated actions on demand, like eating & drinking
+ * Sources: MathGPT
  * @author Sydney Liu
  * @version 21/07/2025
  */
@@ -24,10 +25,25 @@ public class Pet
     private int age; //Age of pet in yrs
     private String image; //Image of pet
     private String deadImage; //Image of pet when it dies
+    private String bentImage; //Image of pet bent down to eat
+    private int bentWidth; //Width of bent image
+    private int bentHeight; //Height of bent image
     private int imageX; //X-coordinate of image
     private int imageY; //Y-coordinate of image
+    private int bentX; //X - coordinate of bent image
+    private int bentY; //Y - coordinate of bent image
     private int rightAttributes; //Right side of right column attributes 
+    private double eatingTime; //TIme the animal takes to eat
     
+    private int foodTop; //Top of food at where the pet likes to enjoy it
+    private int foodLeft; //Left of food at where the pet likes to enjoy it
+    
+    private int ballLeft1; //Left of ball when on pet's head
+    private int ballTop1; //Top of ball when on pet's head
+    private int ballLeft2; //Left of ball after bouncing off pet's head
+    private int ballTop2; //Top of ball after bouncing off pet's head
+    
+    private Ball ball; //The ball this pet plays with
     
     private HashMap<String, Double>animalWeights; //Newborn weights of each animal type
     /**
@@ -41,23 +57,60 @@ public class Pet
         this.age = age;
         this.weight = weight;
         
+        eatingTime = 10000; //MathGPT told me that I cannot write 10^3 for 10 to the power of 3 in java
+        
+        ball = new Ball();
+        
         if (type.equals("dog")){
-            image = "Dog.jpg";
+            image = "Dog.png";
             deadImage = "deadDog.jpg";
+            bentImage = "bentDog.png"; //ChatGPT redrew the dog I drew so that it's bent down to eat
             imageX = 100;
             imageY = 55;
+            bentX = 200;
+            bentY = 120;
+            bentWidth = 200;
+            bentHeight = 150;
+            foodLeft = 212;
+            foodTop = 250;
+            ballLeft1 = 100;
+            ballTop1 = 50;
+            ballLeft2 = 50;
+            ballTop2 = 100;
         }
         else if (type.equals("cat")){
-            image = "Cat.jpg";
+            image = "Cat.png";
             deadImage = "deadCat.jpg";
+            bentImage = "bentCat.png"; //ChatGPT redrew the cat I drew so that it's bent down to eat
             imageX = 100;
             imageY = 55;
+            bentX = 200;
+            bentY = 120;
+            bentWidth = 200;
+            bentHeight = 150;
+            foodTop = 260;
+            foodLeft = 230;
+            ballLeft1 = 100;
+            ballTop1 = 50;
+            ballLeft2 = 50;
+            ballTop2 = 100;
         }
         else{
-            image = "Otter.jpg";
+            image = "Otter.png";
             deadImage = "deadOtter.jpg";
+            bentImage = "bentOtter.png";
             imageX = 80;
-            imageY = 80;
+            imageY = 120;
+            bentX = 100;
+            bentY = 130;
+            bentWidth = 340;
+            bentHeight = 90;
+            foodTop = 180;
+            foodLeft = 415;
+            ballLeft1 = 418;
+            ballTop1 = 80;
+            ballLeft2 = 506;
+            ballTop2 = 160;
         }
         
         animalWeights = new HashMap<String, Double>();
@@ -73,6 +126,16 @@ public class Pet
         
         //Calculate metabolism from weight - MathGPT reminded me to put this below the code that sets the initial "weight" of the object;
         metabolism = weight * 0.0005; 
+    }
+    
+    /**
+     * PLay with ball
+     */
+    public void bounceBall(){
+        ball.bounce(ballLeft1, ballTop1);
+        displayIm();
+        ball.bounce(ballLeft2, ballTop2);
+        displayIm();
     }
     
     /**
@@ -159,6 +222,16 @@ public class Pet
     }
     
     /**
+     * Bend down to eat, and come back up a few seconds later
+     */
+    public void bendToEat(String food, double foodWidth, double foodHeight){
+        //I initially put a line to erase the usual image, but MathGPT told me that ecs "erases" by filling the rectangle with white, which would cover another image I am displaying, so I removed the line
+        UI.drawImage(bentImage, bentX, bentY, bentWidth, bentHeight);
+        UI.sleep(eatingTime);
+        UI.eraseImage(bentImage, bentX, bentY);
+    }
+    
+    /**
      * Change its own weight from digesting food or exercising, and update metabolism according to new weight
      * ChatGPT told me that because Math.round() returns a long (integer), I need to add .0 to the denominators to make them doubles, otherwise java rounds the result of division to an integer which would become 0
      * @param double ratio = added or subtracted weight / pet's weight
@@ -193,5 +266,19 @@ public class Pet
         else if(weight < minWeight){
             UI.drawString("Oops! " + name + " has died from being underweight.", 130, 70);
         }
+    }
+    
+    /**
+     * Return top of food where this pet likes to enjoy it
+     */
+    public int getFoodTop(){
+        return this.foodTop;
+    }
+    
+    /**
+     * Return left of food where this pet likes to enjoy it
+     */
+    public int getFoodLeft(){
+        return this.foodLeft;
     }
 }

@@ -2,7 +2,7 @@
  * A GUI that interacts with the user to allow them to create a pet and take care of it
  * Displays a welcome message at first 
  * After pet selection the pet, its attributes, the player's resources and the pet's behaviour are displayed
- * Sources: ChatGPT 2/9/25, 3/9/25, 4/9/25
+ * Sources: ChatGPT 2/9/25, 3/9/25, 4/9/25, 11/9/25
  * @author Sydney Liu
  * @version 26/07/2025
  */
@@ -56,7 +56,8 @@ public class PetGUI{
     private ReadFromFile attributesReader; //Object to read the pet and UI's attributes that were stored in a file when the user last exited the program
     private HashMap<Integer, String> previousAttributes; //Attributes of pet and UI from last time, read from file
     private long lastTimeStamp; // The time when the user last exited the game (ms)
-    private long tSinceQuit; //Time since the user last quit in (h)
+    private double tSinceQuit; //Time since the user last quit in (h)
+    
      
     public PetGUI(){
         UI.initialise();
@@ -69,7 +70,7 @@ public class PetGUI{
         UI.setMouseListener(this :: doMouse);
         
         leftAttributes = 20;
-        rightAttributes = 400;
+        rightAttributes = 380;
         topAttributes = 20;
         attSpace = 40;
         
@@ -111,10 +112,11 @@ public class PetGUI{
     public void existingPet(){
         if(previousAttributes.get(0).equals("true")){ //If the file says that there is an existing pet
             lastTimeStamp = Long.valueOf(previousAttributes.get(5)); //Access the time when the user last quit
-            tSinceQuit = (Instant.now().toEpochMilli() - lastTimeStamp)/3600000; //time passed = current time - lastTimeStamp; then convert to h
-            createPet(previousAttributes.get(1), previousAttributes.get(2), Integer.valueOf(previousAttributes.get(3)), Double.valueOf(previousAttributes.get(4)));
+            tSinceQuit = (Instant.now().toEpochMilli() - lastTimeStamp)/3600000.0; //time passed = current time - lastTimeStamp; then convert to h -- ChatGPT told me that Java rounds the result of division to an integer when both the numerator and denominator are integers, so to avoid that I made the denominator 3600000.0
+            createPet(previousAttributes.get(1), previousAttributes.get(2), Double.valueOf(previousAttributes.get(3)), Double.valueOf(previousAttributes.get(4))); 
             petPresent = true;
-            pet.changeWeight(-tSinceQuit * pet.getMet()/pet.getWeight()); //Subtract the weight lost while the user was away -- chatGPT reminded me to parse in the subtracted amount as a ratio of the pet's weight and not a value
+            pet.changeWeight((-tSinceQuit * pet.getMet()/pet.getWeight())); //Subtract the weight lost while the user was away -- chatGPT reminded me to parse in the subtracted amount as a ratio of the pet's weight and not a value
+            pet.age((tSinceQuit/730)); //Exaggerated for testing
         }
     }
     
@@ -167,10 +169,10 @@ public class PetGUI{
      * Create and show a certain pet and its attributes
      * @param String type - type of animal
      * @param String name - name of pet
-     * @param int age - current age
+     * @param double age - current age
      * @param double weight - current weight
      */
-    public void createPet(String type, String name, int age, double weight){
+    public void createPet(String type, String name, double age, double weight){
         //MathGPT spotted that I had an "if petPresent == false condition", which would stop this method from being called after clicking "select", so I removed the condition
         //24/8/25
         UI.eraseString("Welcome to Pet Interactor. Bring a pet home by clicking a button :)", 80, 50);
@@ -186,7 +188,7 @@ public class PetGUI{
      */
     public void showAttributes(){
         UI.drawString("Name: " + pet.getName(), rightAttributes, topAttributes);
-        UI.drawString("Age: " + pet.getAge(), rightAttributes, topAttributes + attSpace);
+        UI.drawString("Age: " + Math.round(pet.getAge() * 100) / 100.0, rightAttributes, topAttributes + attSpace);
         UI.drawString("Current weight: " + pet.getWeight() + " kg", leftAttributes, topAttributes);
         UI.drawImage(SHOW_MORE, showMoreLeft, showMoreTop, showMoreWidth, showMoreHeight);
     }
@@ -205,6 +207,23 @@ public class PetGUI{
     }
     
     /**
+     * Force user to enter a non-empty string no more than (a certain number of) characters long
+     * @param String message - input prompt
+     * @param int maxLength = maximum no. of characters allowed
+     * @return String inputString - the final valid user input
+     */
+    public String forceValidString(String message, int maxLength){
+        String inputString;
+        do{
+            inputString = UI.askString(message).trim();
+            if(inputString.equals("") || inputString.length() > maxLength){
+                UI.println("Please enter something 1-" + maxLength + " characters long.");
+            }
+        }while((inputString.equals("") || inputString.length() > maxLength ));
+        return inputString;
+    }
+    
+    /**
      * Method to respond to mouse input
      * @param - String action - type of mouse action
      * @param double x - x-coordinate of mouse action
@@ -212,7 +231,6 @@ public class PetGUI{
      */
     public void doMouse(String action, double x, double y){
         if (action.equals("clicked")){
-            UI.println(x + ", " + y);
             if(inRect(x, y, showMoreLeft, showMoreLeft + showMoreWidth, showMoreTop, showMoreTop + showMoreHeight)){
                 extraAttributes();
             }
@@ -223,19 +241,17 @@ public class PetGUI{
             }
             if(inRect(x, y, selectLeft, selectLeft + selectWidth, selectTop, selectTop + selectHeight) && petPresent == false){
                 String petName;
-                petPresent =  true; //Record that there is already a pet, so that the user can't choose other pets now
                 UI.eraseRect(selectLeft, selectTop, selectWidth, selectHeight); //Erase the "select" button
                 UI.drawString("What name would you like for your pet? Respond in the text panel on the left", 50, 60);
-                petName = UI.askString("Pet name: ");
+                petName = forceValidString("Enter pet name:", 20);
                 UI.eraseString("What name would you like for your pet? Respond in the text panel on the left", 50, 60);
                 createPet(previewedType, petName, 0, animalWeights.get(previewedType));
+                petPresent =  true; //Record that there is already a pet, so that the user can't choose other pets now
             }
             if(foodsShown == true) {//MathGPT reminded me to put == and not = (29/8/25) //This also means petPresent == true
                 UI.clearGraphics();
                 foods.playSound(x, y); //If the user clicked on a food image, play the appropriate sound
-                foods.displayEaten(x, y);
-                pet.bend();
-                foods.hideEaten(x, y);
+                pet.bendToEat(foods.imageClicked(x, y), foodWidth, foodHeight);
                 pet.displayIm();
                 foods.addWeight(x, y); //Add an appropriate weight to the pet according to the food (or no food) clicked
                 showAttributes();
@@ -245,7 +261,7 @@ public class PetGUI{
             else if(exerciseShown == true) { //This also means petPresent == true
                 UI.eraseString("Current weight: " + pet.getWeight() + " kg", leftAttributes, topAttributes); //Erase the pet's weight
                 exercise.playSound(x, y); //If the user clicked on an exercse image, play the appropriate sound
-                if(exercise.imageClicked(x, y) == "ball.jpg"){
+                if(exercise.imageClicked(x, y) == "ball.png"){
                     pet.bounceBall();
                 }
                 exercise.subtractWeight(x, y); //If the user clicks while the exercise options are shown, subtract an appropriate weight from the pet according to the option (or no option) clicked
@@ -310,6 +326,9 @@ public class PetGUI{
      */
     public void showHideExercise(){
         if(petPresent == true && exerciseShown == false){
+            if(foodsShown == true){
+                foods.hideFoods();
+            }
             exercise.showExercise();
             exerciseShown = true;
             foodsShown = false;

@@ -54,18 +54,18 @@ public class Exercise
         dogExercise = new HashMap<Integer, String>();
         dogExercise.put(0, "field.jpg");
         dogExercise.put(1, "pool.jpg");
-        dogExercise.put(2, "ball.jpg");
+        dogExercise.put(2, "ball.png");
         dogExercise.put(3, "treadmill.jpg");
         
         catExercise = new HashMap<Integer, String>();
         catExercise.put(0, "field.jpg");
-        catExercise.put(1, "catToy.jpg");
-        catExercise.put(2, "ball.jpg");
+        catExercise.put(1, "catToy.png");
+        catExercise.put(2, "ball.png");
         catExercise.put(3, "treadmill.jpg");
         
         otterExercise = new HashMap<Integer, String>();
         otterExercise.put(0, "pool.jpg");
-        otterExercise.put(1, "ball.jpg");  
+        otterExercise.put(1, "ball.png");  
         otterExercise.put(2, "ottersPlaying.jpg");
         otterExercise.put(3, "juggling.jpg");
         
@@ -77,19 +77,19 @@ public class Exercise
         exerciseWeights = new HashMap<String, Double>();
         exerciseWeights.put("field.jpg", 0.005);
         exerciseWeights.put("pool.jpg", 0.003);
-        exerciseWeights.put("ball.jpg", 0.005);
+        exerciseWeights.put("ball.png", 0.005);
         exerciseWeights.put("treadmill.jpg", 0.003);
-        exerciseWeights.put("catToy.jpg", 0.002);
+        exerciseWeights.put("catToy.png", 0.002);
         exerciseWeights.put("ottersPlaying.jpg", 0.005);
         exerciseWeights.put("juggling.jpg", 0.002);
         
         exerciseSounds = new HashMap<String, String>();
         exerciseSounds.put("field.jpg", "runningSounds.wav");
-        exerciseSounds.put("pool.jpg", "lakeSwimming.wav");
-        exerciseSounds.put("ball.jpg", "ballSounds.wav");
+        exerciseSounds.put("pool.jpg", "swimmingInPool.wav");
+        exerciseSounds.put("ball.png", "ballSounds.wav");
         exerciseSounds.put("treadmill.jpg", "runningSounds.wav");
-        exerciseSounds.put("catToy.jpg", "catToy.wav");
-        exerciseSounds.put("ottersPlaying.jpg", "lakeSwimming.wav");
+        exerciseSounds.put("catToy.png", "catToy.wav");
+        exerciseSounds.put("ottersPlaying.jpg", "swimmingInPool.wav");
         exerciseSounds.put("juggling.jpg", "pebbles.wav");
     }
 
@@ -101,7 +101,7 @@ public class Exercise
     {
         for (int i : animalsExercise.get(pet.getType()).keySet()){
             UI.drawImage(animalsExercise.get(pet.getType()).get(i), left + distance * i, top, width, height);
-            if(animalsExercise.get(pet.getType()).get(i).equals("catToy.jpg")){
+            if(animalsExercise.get(pet.getType()).get(i).equals("catToy.png")){
                 UI.drawString(" cat toy", left + distance * i, top - desGap);
             }
             else if(animalsExercise.get(pet.getType()).get(i).equals("juggling.jpg")){
@@ -121,7 +121,7 @@ public class Exercise
     public void hideExercise(){
         for(int i : animalsExercise.get(pet.getType()).keySet()){
             UI.eraseRect(left + distance * i, top, width, height);
-            if(animalsExercise.get(pet.getType()).get(i).equals("catToy.jpg")){
+            if(animalsExercise.get(pet.getType()).get(i).equals("catToy.png")){
                 UI.eraseString(" cat toy", left + distance * i, top - desGap);
             }
             else if(animalsExercise.get(pet.getType()).get(i).equals("juggling.jpg")){
@@ -172,12 +172,27 @@ public class Exercise
      * If it is, play the corresponding sound
      */
     public void playSound(double x, double y){
+        if(imageClicked(x, y) != ""){
+            SoundPlayer soundPlayer = new SoundPlayer(exerciseSounds.get(imageClicked(x, y)));
+            soundPlayer.playSound();
+            if(imageClicked(x, y) != "ball.png"){ //The ball semi-animation already pauses the UI so no need for the code below
+                UI.sleep(soundPlayer.getFileLength() * 1000); //Pause UI so that multiple sound effects can't be played at the same time
+            }
+        }
+    }
+    
+    /**
+     * Check if a point (usually point of mouse click) is in the image of any food
+     * If it is, return food image file name
+     */
+    public String imageClicked(double x, double y){
+        String imageClicked = "";
         for (int i : animalsExercise.get(pet.getType()).keySet()){ //Loop through the appropriate index - food image HashMap for the pet
             //If the point is on the image being checked,
             if (inRect(x, y, left + distance * i, left + distance * i + width, top, top + height)){ //MathGPT reminded me to parse in the edges of the images rather than left, top, width and height 29/8/25 
-                 SoundPlayer soundPlayer = new SoundPlayer(exerciseSounds.get(animalsExercise.get(pet.getType()).get(i)));
-                 soundPlayer.playSound();
+                imageClicked = animalsExercise.get(pet.getType()).get(i); 
             }
         }
+        return imageClicked;
     }
 }

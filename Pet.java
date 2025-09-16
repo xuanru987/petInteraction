@@ -22,7 +22,7 @@ public class Pet
     private double minWeight; //Minimum weight to stay alive
     private double maxWeight; //Maximum weight to stay alive
     private double metabolism; //Metabolism, in how many Kg it'll lose per hour without food (easier for the user)
-    private int age; //Age of pet in yrs
+    private double age; //Age of pet in yrs
     private String image; //Image of pet
     private String deadImage; //Image of pet when it dies
     private String bentImage; //Image of pet bent down to eat
@@ -49,7 +49,7 @@ public class Pet
     /**
      * Constructor for objects of class Pet
      */
-    public Pet(String type, String name, int age, double weight)
+    public Pet(String type, String name, double age, double weight)
     {
         // initialise instance variables
         this.type = type;
@@ -62,7 +62,12 @@ public class Pet
         ball = new Ball();
         
         if (type.equals("dog")){
-            image = "Dog.png";
+            //if(age >= 2){
+                image = "Dog.png";
+            //}
+            //else{
+                //image = "babyDog.png";
+            //}
             deadImage = "deadDog.jpg";
             bentImage = "bentDog.png"; //ChatGPT redrew the dog I drew so that it's bent down to eat
             imageX = 100;
@@ -79,24 +84,37 @@ public class Pet
             ballTop2 = 100;
         }
         else if (type.equals("cat")){
-            image = "Cat.png";
+            //if(age >= 2){
+                image = "Cat.png";
+                imageX = 100;
+                imageY = 55;
+            //}
+            //else{
+                //image = "babyCat.png";
+                //imageX = 200;
+                //imageY = 70;
+            //}
+            
             deadImage = "deadCat.jpg";
             bentImage = "bentCat.png"; //ChatGPT redrew the cat I drew so that it's bent down to eat
-            imageX = 100;
-            imageY = 55;
             bentX = 200;
             bentY = 120;
             bentWidth = 200;
             bentHeight = 150;
-            foodTop = 260;
-            foodLeft = 230;
+            foodTop = 235;
+            foodLeft = 220;
             ballLeft1 = 100;
             ballTop1 = 50;
             ballLeft2 = 50;
             ballTop2 = 100;
         }
         else{
-            image = "Otter.png";
+            //if(age >= 2){
+                image = "Otter.png";
+            //}
+           // else{
+                //image = "babyOtter.png";
+            //}
             deadImage = "deadOtter.jpg";
             bentImage = "bentOtter.png";
             imageX = 80;
@@ -105,7 +123,7 @@ public class Pet
             bentY = 130;
             bentWidth = 340;
             bentHeight = 90;
-            foodTop = 180;
+            foodTop = 170;
             foodLeft = 415;
             ballLeft1 = 418;
             ballTop1 = 80;
@@ -118,11 +136,7 @@ public class Pet
         animalWeights.put("cat", 0.1);
         animalWeights.put("otter", 1.0);
         
-        setEquilibriumWeight(); //Calculate the most suitable weight from age and newborn weight
-        
-        //Calculate max and min weight from the pet's most suitable weight
-        maxWeight = equilibriumWeight * 2;
-        minWeight = equilibriumWeight/2;
+        setWeights(); //Calculate the most suitable, max and min weight from age and newborn weight
         
         //Calculate metabolism from weight - MathGPT reminded me to put this below the code that sets the initial "weight" of the object;
         metabolism = weight * 0.0005; 
@@ -140,14 +154,18 @@ public class Pet
     
     /**
      * Calculate and set/update the most suitable weight for the pet using its age
+     * Then, calculate the max and min weights allowed using the most suitable weight
      */
-    public void setEquilibriumWeight(){
+    public void setWeights(){
         if(age <= 5){
             this.equilibriumWeight = animalWeights.get(type) * (1 + age);
         }
         else{
             this.equilibriumWeight = animalWeights.get(type) * 6;
         }
+        //Calculate max and min weight from the pet's most suitable weight
+        maxWeight = equilibriumWeight * 2;
+        minWeight = equilibriumWeight/2;
     }
     
     /**
@@ -185,7 +203,7 @@ public class Pet
      * Return the current age of the pet
      * @return age -- age of pet
      */
-    public int getAge(){
+    public double getAge(){
         return this.age;
     }
     
@@ -223,14 +241,21 @@ public class Pet
     
     /**
      * Bend down to eat, and come back up a few seconds later
+     * @param String food - image of food to be eaten
+     * @param double foodWidth = width of food image
+     * @param double foodHeight - height of food image
      */
     public void bendToEat(String food, double foodWidth, double foodHeight){
-        //I initially put a line to erase the usual image, but MathGPT told me that ecs "erases" by filling the rectangle with white, which would cover another image I am displaying, so I removed the line
-        UI.drawImage(bentImage, bentX, bentY, bentWidth, bentHeight);
-        UI.sleep(eatingTime);
-        UI.eraseImage(bentImage, bentX, bentY);
+        if(food != ""){ //If there is an actual food image parsed in
+            //I initially put a line to erase the usual image, but MathGPT told me that ecs "erases" by filling the rectangle with white, which would cover another image I am displaying, so I removed the line
+            UI.drawImage(bentImage, bentX, bentY, bentWidth, bentHeight);
+            UI.drawImage(food, foodLeft, foodTop, foodWidth, foodHeight);
+            UI.sleep(eatingTime);
+            UI.eraseImage(bentImage, bentX, bentY);
+            UI.eraseImage(food, foodLeft, foodTop);
+        }
     }
-    
+
     /**
      * Change its own weight from digesting food or exercising, and update metabolism according to new weight
      * ChatGPT told me that because Math.round() returns a long (integer), I need to add .0 to the denominators to make them doubles, otherwise java rounds the result of division to an integer which would become 0
@@ -280,5 +305,14 @@ public class Pet
      */
     public int getFoodLeft(){
         return this.foodLeft;
+    }
+    
+    /**
+     * Let the pet age - just change the age variable for now
+     * @param years - "years" (in the game) passed since last time
+     */
+    public void age(double years){
+        this.age = age + years;
+        setWeights();
     }
 }

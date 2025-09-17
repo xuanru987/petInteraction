@@ -26,6 +26,8 @@ public class Pet
     private String image; //Image of pet
     private String deadImage; //Image of pet when it dies
     private String bentImage; //Image of pet bent down to eat
+    private int imageWidth; //Width of usual image
+    private int imageHeight; //Height of usual image
     private int bentWidth; //Width of bent image
     private int bentHeight; //Height of bent image
     private int imageX; //X-coordinate of image
@@ -62,16 +64,22 @@ public class Pet
         ball = new Ball();
         
         if (type.equals("dog")){
-            //if(age >= 2){
+            if(age >= 2){
                 image = "Dog.png";
-            //}
-            //else{
-                //image = "babyDog.png";
-            //}
+                imageX = 100;
+                imageY = 55;
+                imageWidth = 260;
+                imageHeight = 250;
+            }
+            else{
+                image = "babyDog.png";
+                imageX = 150;
+                imageY = 70;
+                imageWidth = 220;
+                imageHeight = 210;
+            }
             deadImage = "deadDog.jpg";
             bentImage = "bentDog.png"; //ChatGPT redrew the dog I drew so that it's bent down to eat
-            imageX = 100;
-            imageY = 55;
             bentX = 200;
             bentY = 120;
             bentWidth = 200;
@@ -84,17 +92,20 @@ public class Pet
             ballTop2 = 100;
         }
         else if (type.equals("cat")){
-            //if(age >= 2){
+            if(age >= 2){
                 image = "Cat.png";
                 imageX = 100;
                 imageY = 55;
-            //}
-            //else{
-                //image = "babyCat.png";
-                //imageX = 200;
-                //imageY = 70;
-            //}
-            
+                imageWidth = 280;
+                imageHeight = 250;
+            }
+            else{
+                image = "babyCat.png";
+                imageX = 170;
+                imageY = 70;
+                imageWidth = 220;
+                imageHeight = 200;
+            }
             deadImage = "deadCat.jpg";
             bentImage = "bentCat.png"; //ChatGPT redrew the cat I drew so that it's bent down to eat
             bentX = 200;
@@ -109,16 +120,22 @@ public class Pet
             ballTop2 = 100;
         }
         else{
-            //if(age >= 2){
+            if(age >= 2){
                 image = "Otter.png";
-            //}
-           // else{
-                //image = "babyOtter.png";
-            //}
+                imageWidth = 400;
+                imageHeight = 130;
+                imageX = 80;
+                imageY = 120;
+            }
+            else{
+                image = "babyOtter.png";
+                imageWidth = 240;
+                imageHeight = 90;
+                imageX = 140;
+                imageY = 120;
+            }
             deadImage = "deadOtter.jpg";
             bentImage = "bentOtter.png";
-            imageX = 80;
-            imageY = 120;
             bentX = 100;
             bentY = 130;
             bentWidth = 340;
@@ -172,7 +189,7 @@ public class Pet
      * Display image of pet
      */
     public void displayIm(){
-        UI.drawImage(image, imageX, imageY);
+        UI.drawImage(image, imageX, imageY, imageWidth, imageHeight);
     }
     
     /**
